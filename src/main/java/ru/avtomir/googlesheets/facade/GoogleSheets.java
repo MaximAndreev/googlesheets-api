@@ -14,4 +14,6 @@ public interface GoogleSheets {
     Sheet getByName(String spreadSheetId, String name) throws IOException;
 
     void renameById(String spreadSheetId, Integer id, String newName) throws IOException;
+
+    Integer createSheet(String spreadSheetId, String name) throws IOException;
 }

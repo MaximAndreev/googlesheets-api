@@ -1,5 +1,6 @@
 package ru.avtomir.googlesheets.facade.impl;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
 import org.slf4j.Logger;
@@ -73,5 +74,24 @@ abstract class AbstractGoogleSheets implements GoogleSheets {
         service.spreadsheets()
                 .batchUpdate(spreadSheetId, new BatchUpdateSpreadsheetRequest().setRequests(requestList))
                 .execute();
+    }
+
+    /**
+     * Attention: if sheet exists than Exception would be thrown {@link GoogleJsonResponseException}
+     * for `400 Bad Request`.
+     */
+    @Override
+    public Integer createSheet(String spreadSheetId, String name) throws IOException {
+        Objects.requireNonNull(spreadSheetId, "spreadSheetId must not be null");
+        Objects.requireNonNull(name, "name must not be null");
+        List<Request> requestList = Collections.singletonList(
+                new Request()
+                        .setAddSheet(new AddSheetRequest()
+                                .setProperties(new SheetProperties()
+                                        .setTitle(name))));
+        BatchUpdateSpreadsheetResponse response = service.spreadsheets()
+                .batchUpdate(spreadSheetId, new BatchUpdateSpreadsheetRequest().setRequests(requestList))
+                .execute();
+        return response.getReplies().get(0).getAddSheet().getProperties().getSheetId();
     }
 }
