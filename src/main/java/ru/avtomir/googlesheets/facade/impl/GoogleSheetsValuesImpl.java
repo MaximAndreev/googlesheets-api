@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.avtomir.googlesheets.api.GoogleSheetsProvider;
 import ru.avtomir.googlesheets.facade.GoogleSheetsValues;
+import ru.avtomir.googlesheets.facade.ValueInputOption;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -20,11 +21,16 @@ public class GoogleSheetsValuesImpl extends AbstractGoogleSheets implements Goog
     }
 
     @Override
-    public void writeValues(String spreadSheetId, String sheetName, String range, List<List<String>> data) {
+    public void writeValues(String spreadSheetId,
+                            String sheetName,
+                            String range,
+                            List<List<String>> data,
+                            ValueInputOption valueInputOption) {
         Objects.requireNonNull(spreadSheetId, "spreadSheetId must not be null");
         Objects.requireNonNull(sheetName, "sheetName must not be null");
         Objects.requireNonNull(range, "range must not be null");
         Objects.requireNonNull(data, "data must not be null");
+        Objects.requireNonNull(valueInputOption, "valueInputOption must not be null");
         logger.info("write to spreadSheetId: {}, sheetName: {}, range: {}", spreadSheetId, sheetName, range);
         try {
             service.spreadsheets()
@@ -32,7 +38,7 @@ public class GoogleSheetsValuesImpl extends AbstractGoogleSheets implements Goog
                     .update(spreadSheetId,
                             sheetName + "!" + range,
                             toValueRange(data))
-                    .setValueInputOption("RAW")
+                    .setValueInputOption(valueInputOption.toString())
                     .execute();
         } catch (IOException e) {
             e.printStackTrace();

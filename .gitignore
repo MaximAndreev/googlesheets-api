@@ -2,4 +2,4 @@
 *.iml
 /tokens/
 /config/
-*/ru/avtomir/*/temp
+**/ru/avtomir/**/temp

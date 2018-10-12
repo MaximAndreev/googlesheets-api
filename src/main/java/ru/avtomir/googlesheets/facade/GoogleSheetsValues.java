@@ -10,7 +10,11 @@ public interface GoogleSheetsValues extends GoogleSheets {
      *
      * @param data - must not contain {@code null} values.
      */
-    void writeValues(String spreadSheetId, String sheetName, String range, List<List<String>> data);
+    void writeValues(String spreadSheetId,
+                     String sheetName,
+                     String range,
+                     List<List<String>> data,
+                     ValueInputOption valueInputOption);
 
     /**
      * Read cells from Google Sheets.
