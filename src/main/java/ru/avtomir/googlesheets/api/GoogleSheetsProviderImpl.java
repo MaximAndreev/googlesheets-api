@@ -38,9 +38,9 @@ public class GoogleSheetsProviderImpl implements GoogleSheetsProvider {
         logger.trace("construct an HTTP transport for service");
         try {
             logger.trace("construct fileDataStoreFactory");
-            this.fileDataStoreFactory = new FileDataStoreFactory(new java.io.File("tokens"));
+            this.fileDataStoreFactory = new FileDataStoreFactory(new java.io.File(tokenFolder));
         } catch (IOException e) {
-            logger.error("can't read file", e);
+            logger.error("can't read file for token in folder: " + tokenFolder, e);
             throw new RuntimeException(e);
         }
         this.credential = loadCredential(credentials);
