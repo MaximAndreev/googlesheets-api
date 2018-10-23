@@ -7,5 +7,8 @@ import java.security.GeneralSecurityException;
 
 public interface GoogleSheetsProvider {
 
+    /**
+     * Get authorized Google Sheets Service.
+     */
     Sheets getSheetsService() throws GeneralSecurityException, IOException;
 }
