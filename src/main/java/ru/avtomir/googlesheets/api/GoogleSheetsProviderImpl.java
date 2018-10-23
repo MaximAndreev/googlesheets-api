@@ -30,11 +30,11 @@ public class GoogleSheetsProviderImpl implements GoogleSheetsProvider {
     private Credential credential;
 
     /**
-     * @param credentials - JSON file with credentials
-     * @param tokenFolder - a name of a folder (would be created) with secret key from Google
+     * @param streamReader - JSON file with credentials. Stream closed after creation.
+     * @param tokenFolder  - a name of a folder (would be created) with secret key from Google
      * @see <a href="https://developers.google.com/sheets/api/quickstart/java">Guide</a>
      */
-    public GoogleSheetsProviderImpl(InputStreamReader credentials, String tokenFolder) throws GeneralSecurityException, IOException {
+    public GoogleSheetsProviderImpl(InputStreamReader streamReader, String tokenFolder) throws GeneralSecurityException, IOException {
         logger.trace("construct an HTTP transport for service");
         try {
             logger.trace("construct fileDataStoreFactory");
@@ -43,7 +43,7 @@ public class GoogleSheetsProviderImpl implements GoogleSheetsProvider {
             logger.error("can't read file for token in folder: " + tokenFolder, e);
             throw new RuntimeException(e);
         }
-        this.credential = loadCredential(credentials);
+        this.credential = loadCredential(streamReader);
     }
 
     @Override
@@ -54,9 +54,9 @@ public class GoogleSheetsProviderImpl implements GoogleSheetsProvider {
                 .build();
     }
 
-    private Credential loadCredential(InputStreamReader credentials) throws GeneralSecurityException, IOException {
+    private Credential loadCredential(InputStreamReader streamReader) throws GeneralSecurityException, IOException {
         logger.info("load credentials");
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, credentials);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, streamReader);
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 JSON_FACTORY,
@@ -66,6 +66,8 @@ public class GoogleSheetsProviderImpl implements GoogleSheetsProvider {
                 .setAccessType("offline")
                 .build();
         logger.info("authorize user");
-        return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+        Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+        streamReader.close();
+        return credential;
     }
 }
