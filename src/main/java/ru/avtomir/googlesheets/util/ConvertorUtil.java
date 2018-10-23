@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DataConvertor {
-    private static final Logger logger = LoggerFactory.getLogger(DataConvertor.class);
+public class ConvertorUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ConvertorUtil.class);
 
     public static List<List<String>> mapToList(List<Map<String, String>> listOfMapData, List<String> orderOfColumns) {
         logger.debug("convert List of Maps to List of Lists");
